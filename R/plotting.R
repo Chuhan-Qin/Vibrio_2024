@@ -322,31 +322,67 @@ amr_hmap_df <-
 
 rownames(amr_hmap_df) <- amr_gene_df$Isolate
 
+
+dfs_gene_df <- read_csv('Input/Fig4/dfs_system.csv')
+
+dfs_hmap_df <-
+  dfs_gene_df %>%
+  dplyr::select(-c('Isolate', 'Lineage')) %>%
+  mutate_all(function(x)
+  {
+    x=case_when(
+      x == '1' ~ 'Yes',
+      x == '0' ~ 'No')
+  }) %>%
+  rename(c('dCTP'='dCTPdeaminase', 'Lamassu'='Lamassu-Fam'))
+
+rownames(hmap_df) <- dfs_df$Isolate
+
+
 row_split <- c(rep('BD-1', 185), rep('BD-2a', 45),
                rep('BD-2b', 34), rep('BD-3', 9))
 
 
-## Plot fig. 4 ##
-fig4 <- 
+## p4_1 ##
+p4_1 <- 
   Heatmap(amr_hmap_df, show_row_names = FALSE, 
           show_column_dend = FALSE, show_row_dend = FALSE,
           column_names_rot = 0, column_names_centered = TRUE,
-          name = 'AMR gene presence',
+          name = 'AMR gene presence          ',
           heatmap_legend_param = 
             list(labels_gp=gpar(fontsize=12),
                  title_gp=gpar(fontsize=12,fontface='bold')),
-          col = c('#440154', '#fde725'),
+          col = c('black', 'grey'),
           rect_gp = gpar(col='grey', lwd=0.1),
           row_split = row_split)
 
+## p4_2 ##
+p4_2 <-
+  Heatmap(dfs_hmap_df, show_row_names = FALSE, 
+          show_column_dend = FALSE, show_row_dend = FALSE,
+          column_names_rot = 0, column_names_centered = TRUE,
+          name = 'Defence system presence',
+          heatmap_legend_param = 
+            list(labels_gp=gpar(fontsize=12),
+                 title_gp=gpar(fontsize=12,fontface='bold')),
+          col = c('black', 'grey'),
+          rect_gp = gpar(col='grey', lwd=0.1),
+          row_split = row_split)
+
+## Combine plots for fig.4 ##
+fig4 <-
+  cowplot::plot_grid(grid.grabExpr(draw(p4_1)), 
+                     grid.grabExpr(draw(p4_2)),
+                     nrow = 2, ncol = 1,
+                     labels = 'AUTO',
+                     align = 'v')
 
 
 ## Save figures ##
 ggsave(plot=fig1, filename='Plots/fig1.png', width=28, height=32, units='cm')
 ggsave(plot=fig2, filename='Plots/fig2.png', width=36, height=36, units='cm')
 ggsave(plot=fig3, filename='Plots/fig3.png', width=28, height=32, units='cm')
+ggsave(plot=fig4, filename='Plots/fig4.png', width=30, height=30, units='cm')
 
-png(file='Plots/fig4.png', width=30, height=15, units='cm', res=1200)
-draw(fig4)
-dev.off()
+
 
