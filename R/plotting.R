@@ -318,7 +318,7 @@ amr_hmap_df <-
     x=case_when(
       x == '1' ~ 'Yes',
       x == '0' ~ 'No')
-  })
+  }) %>% t() %>% data.frame()
 
 rownames(amr_hmap_df) <- amr_gene_df$Isolate
 
@@ -334,40 +334,40 @@ dfs_hmap_df <-
       x == '1' ~ 'Yes',
       x == '0' ~ 'No')
   }) %>%
-  rename(c('dCTP'='dCTPdeaminase', 'Lamassu'='Lamassu-Fam'))
+  rename(c('dCTP'='dCTPdeaminase', 'Lamassu'='Lamassu-Fam')) %>% t() %>% data.frame
 
-rownames(hmap_df) <- dfs_df$Isolate
+rownames(dfs_hmap_df) <- dfs_gene_df$Isolate
 
 
-row_split <- c(rep('BD-1', 185), rep('BD-2a', 45),
+column_split <- c(rep('BD-1', 185), rep('BD-2a', 45),
                rep('BD-2b', 34), rep('BD-3', 9))
 
 
 ## p4_1 ##
 p4_1 <- 
-  Heatmap(amr_hmap_df, show_row_names = FALSE, 
+  Heatmap(amr_hmap_df, show_column_names = FALSE, 
           show_column_dend = FALSE, show_row_dend = FALSE,
           column_names_rot = 0, column_names_centered = TRUE,
-          name = 'AMR gene presence          ',
+          name = 'AMR gene presence       ',
           heatmap_legend_param = 
             list(labels_gp=gpar(fontsize=12),
                  title_gp=gpar(fontsize=12,fontface='bold')),
-          col = c('black', 'grey'),
+          col = c('grey', 'black'),
           rect_gp = gpar(col='grey', lwd=0.1),
-          row_split = row_split)
+          column_split = column_split)
 
 ## p4_2 ##
 p4_2 <-
-  Heatmap(dfs_hmap_df, show_row_names = FALSE, 
+  Heatmap(dfs_hmap_df, show_column_names = FALSE, 
           show_column_dend = FALSE, show_row_dend = FALSE,
           column_names_rot = 0, column_names_centered = TRUE,
-          name = 'Defence system presence',
+          name = 'Phage-defence presence',
           heatmap_legend_param = 
             list(labels_gp=gpar(fontsize=12),
                  title_gp=gpar(fontsize=12,fontface='bold')),
-          col = c('black', 'grey'),
+          col = c('grey', 'black'),
           rect_gp = gpar(col='grey', lwd=0.1),
-          row_split = row_split)
+          column_split = column_split)
 
 ## Combine plots for fig.4 ##
 fig4 <-
