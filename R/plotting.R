@@ -165,7 +165,8 @@ shannon_time_df <- read_csv('Input/Fig2/shannon_time.csv', col_names = TRUE)
 # Set colour scales
 map_col_scale <- scale_discrete_manual(
   "fill",
-   values = c(RColorBrewer::brewer.pal(4,'Set1'),"gold"))
+   values = c('dodgerblue3','firebrick2','firebrick4','purple',"gold"),
+   labels = c('1 (BD-1)','2 (BD-2a)','3 (BD-2b)','4 (BD-3)','Others'))
 
 
 ## P2_1 ##
@@ -189,7 +190,7 @@ p2_1 <-
                   colour=NA,
                   alpha=1,
                   show.legend=TRUE,
-                  legend_name = 'Lineage')+
+                  legend_name = 'Clusters')+
   map_col_scale+
   geom_text(aes(x=longitude+0.3,
                 y=latitude,
